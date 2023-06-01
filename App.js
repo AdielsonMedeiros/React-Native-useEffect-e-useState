@@ -1,29 +1,45 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function App() {
 
-  const [ contador, setContador]= useState(0)
-  const  [renderizado, setRenderizado] = useState(true)
+  const [ input, setInput]= useState('')
+  const [nome, setNome] = useState('')
 
   useEffect(()=>{
-    console.log('montou')
-  },[contador])
+    async function loadData(){
+      await AsyncStorage.getItem('@nome').then((value)=>{
+        setNome(value);
+      })
+    }
 
+    loadData();
+  },[])
+
+
+  async function gravaNome(){
+    await AsyncStorage.setItem('@nome', input)
+    setNome(input)
+    setInput('');
+  }
 
 
   return (
     <View style={styles.container}>
-      <Button title="Aumentar" onPress ={ () => setContador(contador+1) }   />
-      <Text style={{fontSize:30}}>{contador}</Text>
-      <Button title="Diminuir" onPress ={ () => setContador(contador-1) }   />
 
-      <Button title="Mostrar Nome" onPress ={ () => setRenderizado(false) }   />
+      <View style={styles.viewInput}>
+        <TextInput
+        style={styles.input}
+        value={input}
+        onChangeText={ (texto)=> setInput(texto)}
 
-
-      {renderizado && <Nome/> }
-
-
+        />
+        <TouchableOpacity onPress={ gravaNome }>
+          <Text style={styles.botao}>+</Text>
+        </TouchableOpacity>
+      </View>
+      <Text style={styles.nome}>{nome}</Text>
     </View>
   );
 }
@@ -32,17 +48,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    marginTop: 60,
   },
+  viewInput:{
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  input:{
+    width: 350,
+    height: 40,
+    borderColor: '#000',
+    borderWidth: 1,
+    padding: 10,
+
+  },
+  botao:{
+    backgroundColor: '#222',
+    color: '#FFF',
+    height: 40,
+    padding: 10,
+    marginLeft: 4,
+
+  },
+  nome:{
+    marginTop: 15,
+    fontSize: 30,
+  }
 });
 
 
-function Nome(){
-  useEffect(()=>{
-    console.log('COMPONENTE NOME FOI MONTADO')
-
-    return ()=> console.log ('componente desmontado!')
-  },[])
-  return <Text>Adielson</Text>
-}
 
