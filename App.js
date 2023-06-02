@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -22,7 +22,17 @@ export default function App() {
     await AsyncStorage.setItem('@nome', input)
     setNome(input)
     setInput('');
+
   }
+
+
+  // const letrasNome = nome.length;
+  const letrasNome = useMemo( ()=>{
+    console.log('quantidade de letras')
+    return nome.length 
+  },[nome] )
+  
+
 
 
   return (
@@ -40,6 +50,7 @@ export default function App() {
         </TouchableOpacity>
       </View>
       <Text style={styles.nome}>{nome}</Text>
+      <Text style={styles.nome}>Possui: {letrasNome} Letras</Text>
     </View>
   );
 }
