@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from 'react';
+import React, {useState, useEffect, useMemo, useRef} from 'react';
 import { StyleSheet, Text, View, Button, TextInput, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -6,6 +6,7 @@ export default function App() {
 
   const [ input, setInput]= useState('')
   const [nome, setNome] = useState('')
+  const inputRef = useRef(null);
 
   useEffect(()=>{
     async function loadData(){
@@ -29,11 +30,15 @@ export default function App() {
   // const letrasNome = nome.length;
   const letrasNome = useMemo( ()=>{
     console.log('quantidade de letras')
-    return nome.length 
+    return nome.length
   },[nome] )
-  
 
 
+  function chamarInput() {
+    //inputRef.current.focus();//da foco no input
+      inputRef.current.clear(); //apaga tudo do input
+      
+  }
 
   return (
     <View style={styles.container}>
@@ -43,6 +48,7 @@ export default function App() {
         style={styles.input}
         value={input}
         onChangeText={ (texto)=> setInput(texto)}
+        ref ={inputRef} 
 
         />
         <TouchableOpacity onPress={ gravaNome }>
@@ -51,6 +57,9 @@ export default function App() {
       </View>
       <Text style={styles.nome}>{nome}</Text>
       <Text style={styles.nome}>Possui: {letrasNome} Letras</Text>
+      <TouchableOpacity onPress={chamarInput}>
+        <Text>Chamar input</Text>
+      </TouchableOpacity>
     </View>
   );
 }
